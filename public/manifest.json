@@ -1,0 +1,22 @@
+{
+    "manifest_version": 3,
+    "name": "Social Flare",
+    "description": "Your AI Engine for Viral Titles & Prompts",
+    "version": "1.0.0",
+    "action": {
+        "default_popup": "index.html"
+    },
+    "permissions": [
+        "contextMenus",
+        "activeTab",
+        "storage",
+        "scripting"
+    ],
+    "host_permissions": [
+        "https://*/*",
+        "http://*/*"
+    ],
+    "background": {
+        "service_worker": "background.js"
+    }
+}
