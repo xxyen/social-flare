@@ -7,7 +7,6 @@ import getModifiedText from './utils/api';
 import ChatBox from './components/ChatBox';
 import Options from './options/options';
 import { MessageString, loadSettings, Settings } from './utils/storage';
-import { MessageString, loadSettings, Settings } from './utils/storage';
 
 
 function App() {
@@ -45,7 +44,6 @@ function App() {
           setInputText(data.selectedText || "");
         });
 
-
     loadSettings().then(setSettings);
 
     const handleStorageChange = (changes: { [key: string]: chrome.storage.StorageChange }) => {
@@ -71,13 +69,6 @@ function App() {
       } ${settings?.includeEmoji ? 'and emojis' : 'without emojis'}:`;
   
       const result = await getModifiedText(prompt, inputText, maxWords);
-      const maxWords = settings?.maxWords || 100;
-  
-      const prompt = `Create a ${settings?.tone || 'polite'} social media post with a maximum of ${maxWords - 10} words ${
-        settings?.generateHashtags ? 'and include hashtags' : 'without hashtags'
-      } ${settings?.includeEmoji ? 'and emojis' : 'without emojis'}:`;
-  
-      const result = await getModifiedText(prompt, inputText, maxWords);
       setModifiedText(result);
       await navigator.clipboard.writeText(result);
       setShowAlert(true);
@@ -87,8 +78,6 @@ function App() {
       setIsLoading(false);
     }
   };
-
-
 
 
   const handleCopyToClipboard = async () => {
@@ -117,13 +106,9 @@ function App() {
       // }}
     >
       <Box flexGrow={1}>
-      <Box flexGrow={1}>
         {activeTab === 0 && (
           <Box textAlign="left" p={1} sx={{ overflowY: 'auto', paddingBottom: '56px' }}>
-          <Box textAlign="left" p={1} sx={{ overflowY: 'auto', paddingBottom: '56px' }}>
             <Typography variant="h4" gutterBottom>Social Flare</Typography>
-            <Typography variant="h6" >Selected Text</Typography>
-            <Typography variant="body1" color="text.secondary">{inputText}</Typography>
             <Typography variant="h6" >Selected Text</Typography>
             <Typography variant="body1" color="text.secondary">{inputText}</Typography>
             <Button variant="contained" color="primary" onClick={handleModifyText} disabled={isLoading} sx={{ mt: 2 }}>
@@ -145,7 +130,6 @@ function App() {
             )}
           </Box>
         )}
-        {activeTab === 1 && <ChatBox initial={initial} messages={messages} setInitial={setInitial} setMessages={setMessages}/>}
         {activeTab === 1 && <ChatBox initial={initial} messages={messages} setInitial={setInitial} setMessages={setMessages}/>}
         {activeTab === 2 && <Options />}
       </Box>
