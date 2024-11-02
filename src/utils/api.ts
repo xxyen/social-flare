@@ -1,4 +1,5 @@
 import OpenAI from "openai";
+import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
 
 const openai = new OpenAI({
   apiKey: '',
@@ -20,7 +21,7 @@ async function getModifiedText(prompt: string, inputText: string): Promise<strin
         },
       ],
       temperature: 0.7,
-      max_tokens: 64,
+      max_tokens: 150,
       top_p: 1,
     });
 
