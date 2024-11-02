@@ -1,7 +1,20 @@
-
 import { useEffect, StrictMode, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { saveSettings, loadSettings, resetSettings, Settings, Tone } from '../utils/storage';
+import { 
+  Container, 
+  Typography, 
+  Select, 
+  MenuItem, 
+  FormControl, 
+  InputLabel, 
+  TextField, 
+  Checkbox, 
+  FormControlLabel, 
+  Button, 
+  Snackbar 
+} from '@mui/material';
+import MuiAlert from '@mui/material/Alert';
 
 function Options() {
   const [settings, setSettings] = useState<Settings>({
@@ -10,6 +23,7 @@ function Options() {
     generateHashtags: false,
     includeEmoji: false,
   });
+  const [showAlert, setShowAlert] = useState(false);
 
   useEffect(() => {
     loadSettings().then(setSettings);
@@ -17,7 +31,8 @@ function Options() {
 
   const handleSave = () => {
     saveSettings(settings).then(() => {
-      alert('Settings saved!');
+      console.log('Settings saved!');
+      setShowAlert(true);
     });
   };
 
@@ -26,61 +41,84 @@ function Options() {
   };
 
   return (
-    <div>
-      <h1>Options</h1>
-      <label>
-        Tone:
-        <select
+    <Container maxWidth="sm" sx={{ mt: 4, p: 3, boxShadow: 3, borderRadius: 2 }}>
+      <Typography variant="h5" gutterBottom>Options</Typography>
+
+      <FormControl fullWidth sx={{ mt: 2 }}>
+        <InputLabel>Tone</InputLabel>
+        <Select
           value={settings.tone}
           onChange={(e) => setSettings({ ...settings, tone: e.target.value as Tone })}
+          label="Tone"
         >
-          <option value="polite">Polite</option>
-          <option value="witty">Witty</option>
-          <option value="enthusiastic">Enthusiastic</option>
-          <option value="friendly">Friendly</option>
-          <option value="informational">Informational</option>
-          <option value="funny">Funny</option>
-        </select>
-      </label>
+          <MenuItem value="polite">Polite</MenuItem>
+          <MenuItem value="witty">Witty</MenuItem>
+          <MenuItem value="enthusiastic">Enthusiastic</MenuItem>
+          <MenuItem value="friendly">Friendly</MenuItem>
+          <MenuItem value="informational">Informational</MenuItem>
+          <MenuItem value="funny">Funny</MenuItem>
+        </Select>
+      </FormControl>
 
-      <label>
-        Max Words:
-        <input
-          type="number"
-          value={settings.maxWords}
-          onChange={(e) => setSettings({ ...settings, maxWords: parseInt(e.target.value) })}
-        />
-      </label>
+      <TextField
+        fullWidth
+        type="number"
+        label="Max Words"
+        variant="outlined"
+        sx={{ mt: 2 }}
+        value={settings.maxWords}
+        onChange={(e) => setSettings({ ...settings, maxWords: parseInt(e.target.value) })}
+      />
 
-      <label>
-        Generate Hashtags:
-        <input
-          type="checkbox"
-          checked={settings.generateHashtags}
-          onChange={(e) => setSettings({ ...settings, generateHashtags: e.target.checked })}
-        />
-      </label>
+      <FormControlLabel
+        control={
+          <Checkbox
+            checked={settings.generateHashtags}
+            onChange={(e) => setSettings({ ...settings, generateHashtags: e.target.checked })}
+          />
+        }
+        label="Generate Hashtags"
+        sx={{ mt: 2 }}
+      />
 
-      <label>
-        Include Emoji:
-        <input
-          type="checkbox"
-          checked={settings.includeEmoji}
-          onChange={(e) => setSettings({ ...settings, includeEmoji: e.target.checked })}
-        />
-      </label>
+      <FormControlLabel
+        control={
+          <Checkbox
+            checked={settings.includeEmoji}
+            onChange={(e) => setSettings({ ...settings, includeEmoji: e.target.checked })}
+          />
+        }
+        label="Include Emoji"
+        sx={{ mt: 1 }}
+      />
 
-      <button onClick={handleSave}>Save</button>
-      <button onClick={handleReset}>Reset to Default</button>
-    </div>
+      <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+        <Button variant="contained" color="primary" onClick={handleSave}>
+          Save
+        </Button>
+        <Button variant="contained" color="secondary" onClick={handleReset}>
+          Reset to Default
+        </Button>
+      </div>
+
+      <Snackbar
+        open={showAlert}
+        autoHideDuration={2000}
+        onClose={() => setShowAlert(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <MuiAlert elevation={6} variant="filled" onClose={() => setShowAlert(false)} severity="success">
+          Settings saved successfully!
+        </MuiAlert>
+      </Snackbar>
+    </Container>
   );
 }
 
 export default Options;
 
-
 createRoot(document.getElementById('root')!).render(
-<StrictMode>
+  <StrictMode>
     <Options />
-</StrictMode>
-)
+  </StrictMode>
+);
