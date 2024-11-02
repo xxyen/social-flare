@@ -1,7 +1,7 @@
 chrome.runtime.onInstalled.addListener(() => {
     chrome.contextMenus.create({
       id: "modifyText",
-      title: "Modify with AI",
+      title: "Modify with Social Flare",
       contexts: ["selection"],
     });
   });

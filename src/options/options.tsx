@@ -24,12 +24,17 @@ function Options() {
     includeEmoji: false,
   });
   const [showAlert, setShowAlert] = useState(false);
+  const [showError, setShowError] = useState(false);
 
   useEffect(() => {
     loadSettings().then(setSettings);
   }, []);
 
   const handleSave = () => {
+    if (settings.maxWords < 10 || settings.maxWords > 500) {
+      setShowError(true);
+      return;
+    }
     saveSettings(settings).then(() => {
       console.log('Settings saved!');
       setShowAlert(true);
@@ -41,7 +46,7 @@ function Options() {
   };
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 4, p: 3, boxShadow: 3, borderRadius: 2 }}>
+    <Container maxWidth="sm" sx={{ mt: 4, p: 3, boxShadow: 3, borderRadius: 2}}>
       <Typography variant="h5" gutterBottom>Options</Typography>
 
       <FormControl fullWidth sx={{ mt: 2 }}>
@@ -68,6 +73,8 @@ function Options() {
         sx={{ mt: 2 }}
         value={settings.maxWords}
         onChange={(e) => setSettings({ ...settings, maxWords: parseInt(e.target.value) })}
+        helperText="Please enter a value between 10 and 500."
+        error={settings.maxWords < 10 || settings.maxWords > 500}
       />
 
       <FormControlLabel
@@ -105,10 +112,21 @@ function Options() {
         open={showAlert}
         autoHideDuration={2000}
         onClose={() => setShowAlert(false)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
         <MuiAlert elevation={6} variant="filled" onClose={() => setShowAlert(false)} severity="success">
           Settings saved successfully!
+        </MuiAlert>
+      </Snackbar>
+
+      <Snackbar
+        open={showError}
+        autoHideDuration={3000}
+        onClose={() => setShowError(false)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <MuiAlert elevation={6} variant="filled" onClose={() => setShowError(false)} severity="error">
+          Max Words must be between 10 and 500.
         </MuiAlert>
       </Snackbar>
     </Container>
