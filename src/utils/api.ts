@@ -1,4 +1,5 @@
 import OpenAI from "openai";
+import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
 
 const openai = new OpenAI({
   apiKey: '',

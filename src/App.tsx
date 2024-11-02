@@ -27,7 +27,7 @@ function App() {
   };
 
   return (
-    <div>
+    <div style={{ position:"relative", height: "500px", width: "300px"  }}>
       <h1>Social Flare</h1>
       <h2>Selected Text</h2>
       <p>{inputText}</p>
