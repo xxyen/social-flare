@@ -108,21 +108,21 @@ function App() {
       <Box flexGrow={1}>
         {activeTab === 0 && (
           <Box textAlign="left" p={1} sx={{ overflowY: 'auto', paddingBottom: '56px' }}>
-            <Typography variant="h4" gutterBottom>Social Flare</Typography>
-            <Typography variant="h6" >Selected Text</Typography>
-            <Typography variant="body1" color="text.secondary">{inputText}</Typography>
-            <Button variant="contained" color="primary" onClick={handleModifyText} disabled={isLoading} sx={{ mt: 2 }}>
+            <Typography color='#3f51b5' style={{display:'flex', justifyContent:'center', alignContent:'center', fontWeight: 'bold'}} variant='h6' gutterBottom>Social Flare</Typography>
+            <Typography variant='body1' >Selected Text</Typography>
+            <Typography variant='body2' color="text.secondary">{inputText}</Typography>
+            <Button variant="contained" color="primary" onClick={handleModifyText} disabled={isLoading} sx={{ mt: 2 , fontSize: 13}}>
               {isLoading ? <CircularProgress size={24} /> : 'Modify Text'}
             </Button>
             {modifiedText && (
               <Box mt={3}>
-                <Typography variant="h6">Modified Text:</Typography>
-                <Typography variant="body1">{modifiedText}</Typography>
+                <Typography variant='body1'>Modified Text:</Typography>
+                <Typography variant='body2'>{modifiedText}</Typography>
                 <Button
                   variant="outlined"
                   color="success"
                   onClick={handleCopyToClipboard}
-                  sx={{ mt: 2 }}
+                  sx={{ mt: 2, fontSize: 13 }}
                 >
                   Copy to Clipboard
                 </Button>
@@ -134,11 +134,57 @@ function App() {
         {activeTab === 2 && <Options />}
       </Box>
 
-      <AppBar position="fixed" color="default" sx={{ top: 'auto', bottom: 0 }}>
+      {/* <AppBar position="fixed" color="default" sx={{ top: 'auto', bottom: 0, height: 64 }}>
         <Tabs value={activeTab} onChange={handleTabChange} variant="fullWidth" indicatorColor="primary">
-          <Tab icon={<HomeIcon />} label="Home" />
-          <Tab icon={<ChatIcon />} label="Chat" />
-          <Tab icon={<SettingsIcon />} label="Options" />
+          <Tab icon={<HomeIcon />} iconPosition="start" sx={{alignItems: 'center',justifyContent: 'center', fontSize: '12px'}} label="Home" />
+          <Tab icon={<ChatIcon />} iconPosition="start" sx={{alignItems: 'center',justifyContent: 'center', fontSize: '12px'}} label="Chat" />
+          <Tab icon={<SettingsIcon />} iconPosition="start" sx={{alignItems: 'center',justifyContent: 'center', fontSize: '12px'}} label="Options" />
+        </Tabs>
+      </AppBar> */}
+      <AppBar position="fixed" color="default" sx={{ top: 'auto', bottom: 0, height: 40, paddingTop: 0.3}}>
+        <Tabs value={activeTab} onChange={handleTabChange} variant="fullWidth" indicatorColor="primary">
+          <Tab 
+            icon={<HomeIcon sx={{ fontSize: 20 }} />} 
+            label="Home" 
+            iconPosition="start"
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: '100%',
+              minHeight: 0, 
+              fontSize: '12px' // Adjust font size
+            }} 
+          />
+          <Tab 
+            icon={<ChatIcon sx={{ fontSize: 20 }} />} 
+            label="Chat" 
+            iconPosition="start"
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: '100%',
+              minHeight: 0,
+              fontSize: '12px'
+            }} 
+          />
+          <Tab 
+            icon={<SettingsIcon sx={{ fontSize: 20 }} />} 
+            label="Options" 
+            iconPosition="start"
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: '100%',
+              minHeight: 0,
+              fontSize: '12px'
+            }} 
+          />
         </Tabs>
       </AppBar>
 
