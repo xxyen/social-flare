@@ -6,7 +6,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import getModifiedText from './utils/api';
 import ChatBox from './components/ChatBox';
 import Options from './options/options';
-import { loadSettings, Settings } from './utils/storage';
+import { MessageString, loadSettings, Settings } from './utils/storage';
 
 
 function App() {
@@ -16,6 +16,17 @@ function App() {
   const [activeTab, setActiveTab] = useState(0);
   const [showAlert, setShowAlert] = useState(false);
   const [settings, setSettings] = useState<Settings | null>(null);
+
+  const [initial, setInitial] = useState(true);
+  const [messages, setMessages] = useState<MessageString[]>([
+    {
+      message: "Hello, I'm ChatGPT! Ask me anything!",
+      sentTime: "just now",
+      sender: "ChatGPT",
+      direction: "incoming",
+      position: "normal",
+    }
+  ]);
 
 
   // useEffect(() => {
@@ -119,7 +130,7 @@ function App() {
             )}
           </Box>
         )}
-        {activeTab === 1 && <ChatBox />}
+        {activeTab === 1 && <ChatBox initial={initial} messages={messages} setInitial={setInitial} setMessages={setMessages}/>}
         {activeTab === 2 && <Options />}
       </Box>
 

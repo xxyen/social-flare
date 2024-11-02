@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import '../App.css'
+import { MessageString } from '../utils/storage';
 import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
 import { MainContainer, ChatContainer, MessageList, Message, MessageInput, TypingIndicator, MessageSeparator,Avatar } from '@chatscope/chat-ui-kit-react';
 
@@ -9,30 +10,21 @@ const systemMessage = {
 }
 
 
-export type MessageDirection = "incoming" | "outgoing" | 0 | 1 ;
-
-interface MessageString {
-    message?:string;
-    sentTime?:string;
-    sender?:string;
-    direction: MessageDirection;
-    position: "single" | "first" | "normal" | "last" | 0 |  1 | 2 | 3;
-}
-
-
-function ChatBox() {
+function ChatBox({initial,messages,setInitial,setMessages}:
+  {initial:boolean,messages:MessageString[],
+    setInitial:(initail:boolean)=>void,setMessages:(messages:MessageString[])=>void}) {
   const todayString = new Date().toDateString();
 
-  const [initial, setInitial] = useState(true);
-  const [messages, setMessages] = useState<MessageString[]>([
-    {
-      message: "Hello, I'm ChatGPT! Ask me anything!",
-      sentTime: "just now",
-      sender: "ChatGPT",
-      direction: "incoming",
-      position: "normal",
-    }
-  ]);
+  // const [initial, setInitial] = useState(true);
+  // const [messages, setMessages] = useState<MessageString[]>([
+  //   {
+  //     message: "Hello, I'm ChatGPT! Ask me anything!",
+  //     sentTime: "just now",
+  //     sender: "ChatGPT",
+  //     direction: "incoming",
+  //     position: "normal",
+  //   }
+  // ]);
   const [isTyping, setIsTyping] = useState(false);
 
   const clickInitial = () => {
