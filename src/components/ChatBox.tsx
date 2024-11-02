@@ -24,6 +24,7 @@ function ChatBox({initial,messages,setInitial,setMessages}:
   const [isTyping, setIsTyping] = useState(false);
   const [socialFlarePrompt, setSocialFlarePrompt] = useState("");
   const [showAlert, setShowAlert] = useState(false);
+  const [ value, setValue ] = useState(""); 
 
 
 
@@ -37,9 +38,9 @@ function ChatBox({initial,messages,setInitial,setMessages}:
       .catch((error) => console.error("Failed to load prompt:", error));
   }, []);
 
-  const handleSend = async (message: string) => {
+  const handleSend = async () => {
     const newMessage: MessageString = {
-      message,
+      message: value,
       direction: 'outgoing',
       sender: "user",
       position: "normal",
@@ -48,6 +49,7 @@ function ChatBox({initial,messages,setInitial,setMessages}:
     const newMessages = [...messages, newMessage];
     setMessages(newMessages);
     setIsTyping(true);
+    setValue(""); 
     await processMessageToChatGPT(newMessages);
   };
 
@@ -148,7 +150,10 @@ function ChatBox({initial,messages,setInitial,setMessages}:
             
                 })}             
             </MessageList>
-            <MessageInput style={{fontSize: '12px'}} placeholder="Type message here" onSend={handleSend} attachButton={false}/>              
+            <MessageInput style={{fontSize: '12px'}} placeholder="Type message here" onSend={handleSend} attachButton={false} onChange={(val) => setValue(val)} value={value} onPaste={(evt) => {
+                evt.preventDefault();
+                setValue(evt.clipboardData.getData("text"));
+         }} />              
           </ChatContainer>
         </MainContainer>)}
 
