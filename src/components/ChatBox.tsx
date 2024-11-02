@@ -1,9 +1,13 @@
 import { useState, useEffect } from 'react'
+import { Snackbar, Alert } from '@mui/material';
 import '../App.css'
 import { MessageString } from '../utils/storage';
 import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
 import { MainContainer, ChatContainer, MessageList, Message, MessageInput, TypingIndicator,  MessageSeparator,Avatar  } from '@chatscope/chat-ui-kit-react';
 import ReactMarkdown from "react-markdown";
+// import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCopy } from '@fortawesome/free-solid-svg-icons';
 
 
 const API_KEY = '';
@@ -19,6 +23,7 @@ function ChatBox({initial,messages,setInitial,setMessages}:
   
   const [isTyping, setIsTyping] = useState(false);
   const [socialFlarePrompt, setSocialFlarePrompt] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
 
 
 
@@ -88,10 +93,31 @@ function ChatBox({initial,messages,setInitial,setMessages}:
     setInitial(false);
   }
 
+  const handleCopyToClipboard = async (text:string|undefined) => {
+    try {
+      if(text){
+        await navigator.clipboard.writeText(text);  
+      }
+      setShowAlert(true);
+    } catch (error) {
+      console.error("Failed to copy text:", error);
+    }
+  };
+
   return (
-    <div className="ChatBox" style={{ position:"relative", height: "440px"}}>
-      {!initial && (             
+    <div className="ChatBox" style={{ position:"relative", height: "475px"}}>
+      {!initial && (           
         <MainContainer>
+          <Snackbar
+            open={showAlert}
+            autoHideDuration={2000}
+            onClose={() => setShowAlert(false)}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          >
+            <Alert onClose={() => setShowAlert(false)} severity="success" sx={{ width: '100%' }}>
+              Text copied to clipboard!
+            </Alert>
+          </Snackbar>  
           <ChatContainer>
             <MessageList 
               scrollBehavior="smooth" 
@@ -109,10 +135,14 @@ function ChatBox({initial,messages,setInitial,setMessages}:
                     position: "normal",
                 }}
             >
-                {message.direction === "incoming" ? <Avatar size='md' src={'icon.jpg'} /> : null}
+                {message.direction === "incoming" ? <Avatar size='md' src={'icon.jpg'} /> 
+                : null}
                 
                 <Message.CustomContent>
                     <ReactMarkdown>{message.message}</ReactMarkdown>
+                    {message.direction === "incoming" && (
+                    <FontAwesomeIcon onClick={()=>handleCopyToClipboard(message.message)} icon={faCopy} />
+                  )}
                 </Message.CustomContent>
                 </Message>;
             
