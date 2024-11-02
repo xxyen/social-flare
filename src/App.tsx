@@ -32,6 +32,7 @@ function App() {
     chrome.storage.local.get("selectedText", (data) => {
           setInputText(data.selectedText || "");
         });
+
     loadSettings().then(setSettings);
 
     const handleStorageChange = (changes: { [key: string]: chrome.storage.StorageChange }) => {
@@ -50,11 +51,13 @@ function App() {
   const handleModifyText = async () => {
     setIsLoading(true);
     try {
-      const prompt = `Create a ${settings?.tone || 'polite'} social media post with a maximum of ${settings?.maxWords || 100} words ${
-        settings?.generateHashtags ? 'and include hashtags' : ''
-      } ${settings?.includeEmoji ? 'and emojis' : ''}:`;
-
-      const result = await getModifiedText(prompt, inputText);
+      const maxWords = settings?.maxWords || 100;
+  
+      const prompt = `Create a ${settings?.tone || 'polite'} social media post with a maximum of ${maxWords - 10} words ${
+        settings?.generateHashtags ? 'and include hashtags' : 'without hashtags'
+      } ${settings?.includeEmoji ? 'and emojis' : 'without emojis'}:`;
+  
+      const result = await getModifiedText(prompt, inputText, maxWords);
       setModifiedText(result);
       await navigator.clipboard.writeText(result);
       setShowAlert(true);
@@ -64,6 +67,8 @@ function App() {
       setIsLoading(false);
     }
   };
+
+
   const handleCopyToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(modifiedText);
