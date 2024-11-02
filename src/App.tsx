@@ -6,6 +6,8 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import getModifiedText from './utils/api';
 import ChatBox from './components/ChatBox';
 import Options from './options/options';
+import { loadSettings, Settings } from './utils/storage';
+
 
 function App() {
   const [inputText, setInputText] = useState("");
@@ -13,17 +15,45 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
   const [showAlert, setShowAlert] = useState(false);
+  const [settings, setSettings] = useState<Settings | null>(null);
+
+
+  // useEffect(() => {
+  //   chrome.storage.local.get("selectedText", (data) => {
+  //     setInputText(data.selectedText || "");
+  //   });
+
+  //   loadSettings().then((loadedSettings) => {
+  //     setSettings(loadedSettings);
+  //   });
+  // }, []);
 
   useEffect(() => {
     chrome.storage.local.get("selectedText", (data) => {
-      setInputText(data.selectedText || "");
-    });
+          setInputText(data.selectedText || "");
+        });
+    loadSettings().then(setSettings);
+
+    const handleStorageChange = (changes: { [key: string]: chrome.storage.StorageChange }) => {
+      if (changes.settings) {
+        loadSettings().then(setSettings);
+      }
+    };
+
+    chrome.storage.onChanged.addListener(handleStorageChange);
+
+    return () => {
+      chrome.storage.onChanged.removeListener(handleStorageChange);
+    };
   }, []);
 
   const handleModifyText = async () => {
     setIsLoading(true);
     try {
-      const prompt = "Create a viral social media post for :";
+      const prompt = `Create a ${settings?.tone || 'polite'} social media post with a maximum of ${settings?.maxWords || 100} words ${
+        settings?.generateHashtags ? 'and include hashtags' : ''
+      } ${settings?.includeEmoji ? 'and emojis' : ''}:`;
+
       const result = await getModifiedText(prompt, inputText);
       setModifiedText(result);
       await navigator.clipboard.writeText(result);
@@ -34,7 +64,6 @@ function App() {
       setIsLoading(false);
     }
   };
-
   const handleCopyToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(modifiedText);
