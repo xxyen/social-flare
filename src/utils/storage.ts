@@ -1,4 +1,4 @@
-export type Tone = 'polite' | 'professional' | 'excited' | 'friendly' | 'informative' | 'funny' | 'inspiring';
+export type Tone = 'polite' | 'professional' | 'excited' | 'friendly' | 'informative' | 'funny' | 'inspiring' | 'other' | string;
 
 export type MessageDirection = "incoming" | "outgoing" | 0 | 1 ;
 export interface MessageString {

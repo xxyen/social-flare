@@ -17,17 +17,35 @@ import {
 import MuiAlert from '@mui/material/Alert';
 
 function Options() {
+  const predefinedTones: Tone[] = [
+    'polite', 
+    'professional', 
+    'excited', 
+    'friendly', 
+    'informative', 
+    'funny', 
+    'inspiring'
+  ];
+  
   const [settings, setSettings] = useState<Settings>({
     tone: 'polite',
     maxWords: 100,
     generateHashtags: false,
     includeEmoji: false,
   });
+  const [customTone, setCustomTone] = useState('');
   const [showAlert, setShowAlert] = useState(false);
   const [showError, setShowError] = useState(false);
 
   useEffect(() => {
-    loadSettings().then(setSettings);
+    loadSettings().then((loadedSettings) => {
+      if (!predefinedTones.includes(loadedSettings.tone as Tone)) {
+        setSettings({ ...loadedSettings, tone: 'other' });
+        setCustomTone(loadedSettings.tone);
+      } else {
+        setSettings(loadedSettings);
+      }
+    });
   }, []);
 
   const handleSave = () => {
@@ -35,14 +53,18 @@ function Options() {
       setShowError(true);
       return;
     }
-    saveSettings(settings).then(() => {
+    const finalSettings = { ...settings, tone: settings.tone === 'other' ? customTone : settings.tone };
+    saveSettings(finalSettings).then(() => {
       console.log('Settings saved!');
       setShowAlert(true);
     });
   };
 
   const handleReset = () => {
-    resetSettings().then(loadSettings).then(setSettings);
+    resetSettings().then(loadSettings).then((defaultSettings) => {
+      setSettings(defaultSettings);
+      setCustomTone('');
+    });
   };
 
   return (
@@ -56,14 +78,23 @@ function Options() {
           onChange={(e) => setSettings({ ...settings, tone: e.target.value as Tone })}
           label="Tone"
         >
-          <MenuItem value="polite">Polite</MenuItem>
-          <MenuItem value="witty">Witty</MenuItem>
-          <MenuItem value="enthusiastic">Enthusiastic</MenuItem>
-          <MenuItem value="friendly">Friendly</MenuItem>
-          <MenuItem value="informational">Informational</MenuItem>
-          <MenuItem value="funny">Funny</MenuItem>
+          {predefinedTones.map((tone) => (
+            <MenuItem key={tone} value={tone}>{tone.charAt(0).toUpperCase() + tone.slice(1)}</MenuItem>
+          ))}
+          <MenuItem value="other">Other</MenuItem>
         </Select>
       </FormControl>
+
+      {settings.tone === 'other' && (
+        <TextField
+          fullWidth
+          label="Custom Tone"
+          variant="outlined"
+          sx={{ mt: 2 }}
+          value={customTone}
+          onChange={(e) => setCustomTone(e.target.value)}
+        />
+      )}
 
       <TextField
         fullWidth
