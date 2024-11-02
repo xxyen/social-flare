@@ -24,16 +24,17 @@
 ### Installation
 
 1. Clone this repository.
-2. Run the following commands:
+2. Add your OpenAI API key to `utils/api.ts` and `components/ChatBox.tsx` to enable AI functionality.
+3. Run the following commands:
 
    ```bash
    npm install
    npm run build
     ```
 
-3. Go to chrome://extensions in your Chrome browser.
-4. Enable "Developer mode".
-5. Click "Load unpacked" and select the dist folder generated from the build.
+4. Go to chrome://extensions in your Chrome browser.
+5. Enable "Developer mode".
+6. Click "Load unpacked" and select the dist folder generated from the build.
 
 ### Usage
 1. Highlight any text on a webpage.
