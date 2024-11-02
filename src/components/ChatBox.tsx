@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import '../App.css'
 import { MessageString } from '../utils/storage';
+import { MessageString } from '../utils/storage';
 import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
 import { MainContainer, ChatContainer, MessageList, Message, MessageInput, TypingIndicator,  MessageSeparator,Avatar  } from '@chatscope/chat-ui-kit-react';
 import ReactMarkdown from "react-markdown";
@@ -91,12 +92,15 @@ function ChatBox({initial,messages,setInitial,setMessages}:
   return (
     <div className="ChatBox" style={{ position:"relative", height: "440px"}}>
       {!initial && (        
+    <div className="ChatBox" style={{ position:"relative", height: "440px"}}>
+      {!initial && (        
         <MainContainer>
           <ChatContainer>
             <MessageList 
               scrollBehavior="smooth" 
               typingIndicator={isTyping ? <TypingIndicator content="SocialFlare is typing" /> : null}
             >
+              <MessageSeparator content={todayString} style={{fontSize:'10px'}} />
               <MessageSeparator content={todayString} style={{fontSize:'10px'}} />
               {messages.map((message, i) => {
                 console.log(message);
