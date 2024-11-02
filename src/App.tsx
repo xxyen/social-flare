@@ -89,12 +89,12 @@ function App() {
       //   px: 0,
       // }}
     >
-      <Box flexGrow={1} p={1} sx={{ overflowY: 'auto', paddingBottom: '56px' }}>
+      <Box flexGrow={1}>
         {activeTab === 0 && (
-          <Box textAlign="center">
+          <Box textAlign="left" p={1} sx={{ overflowY: 'auto', paddingBottom: '56px' }}>
             <Typography variant="h4" gutterBottom>Social Flare</Typography>
-            <Typography variant="h6" mt={2}>Selected Text</Typography>
-            <Typography variant="body1" color="text.secondary" mt={1}>{inputText}</Typography>
+            <Typography variant="h6" >Selected Text</Typography>
+            <Typography variant="body1" color="text.secondary">{inputText}</Typography>
             <Button variant="contained" color="primary" onClick={handleModifyText} disabled={isLoading} sx={{ mt: 2 }}>
               {isLoading ? <CircularProgress size={24} /> : 'Modify Text'}
             </Button>

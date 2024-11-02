@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import '../App.css'
 import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
-import { MainContainer, ChatContainer, MessageList, Message, MessageInput, TypingIndicator } from '@chatscope/chat-ui-kit-react';
+import { MainContainer, ChatContainer, MessageList, Message, MessageInput, TypingIndicator, MessageSeparator,Avatar } from '@chatscope/chat-ui-kit-react';
 
 const API_KEY = '';
 const systemMessage = { 
@@ -21,6 +21,9 @@ interface MessageString {
 
 
 function ChatBox() {
+  const todayString = new Date().toDateString();
+
+  const [initial, setInitial] = useState(true);
   const [messages, setMessages] = useState<MessageString[]>([
     {
       message: "Hello, I'm ChatGPT! Ask me anything!",
@@ -32,6 +35,10 @@ function ChatBox() {
   ]);
   const [isTyping, setIsTyping] = useState(false);
 
+  const clickInitial = () => {
+    setInitial(false);
+  }
+
   const handleSend = async (message:string) => {
     const newMessage:MessageString = {
       message,
@@ -41,7 +48,6 @@ function ChatBox() {
     };
 
     const newMessages = [...messages, newMessage];
-    console.log("sending...");
     setMessages(newMessages);
 
     // Initial system message to determine ChatGPT functionality
@@ -65,8 +71,6 @@ function ChatBox() {
       return { role: role, content: messageObject.message}
     });
 
-    console.log("Step1");
-
     // Get the request body set up with the model we plan to use
     // and the messages which we formatted above. We add a system message in the front to'
     // determine how we want chatGPT to act. 
@@ -87,10 +91,8 @@ function ChatBox() {
       },
       body: JSON.stringify(apiRequestBody)
     }).then((data) => {
-        console.log("Step2");
         return data.json();
     }).then((data) => {
-        console.log("Step3");
         console.log(data);
         const newMessage:MessageString = {
             message: data.choices[0].message.content,
@@ -107,30 +109,46 @@ function ChatBox() {
   }
 
   return (
-    <div className="ChatBox">
-      <div style={{ position:"relative", height: "500px", width: "300px"  }}>
+    <div className="ChatBox" style={{ position:"relative", height: "440px"}}>
+      {!initial && (        
         <MainContainer>
           <ChatContainer>       
             <MessageList 
               scrollBehavior="smooth" 
               typingIndicator={isTyping ? <TypingIndicator content="ChatGPT is typing" /> : null}
             >
+              <MessageSeparator content={todayString} style={{fontSize:'10px'}} />
               {messages.map((message, i) => {
                 console.log(message);
-                return <Message key={i} model={{
+                return <Message key={i} style={{fontSize: '12px'}}
+                    model={{
                     message: message.message,
                     sentTime: message.sentTime,
                     sender: message.sender,
                     direction: message.direction ? message.direction : "outgoing",
-                    position: "normal"
-                  }} />;
-                })}
-                                
+                    position: "normal",
+                  }} children={message.direction === "incoming" ? <Avatar size='md' src={'icon.jpg'}  /> : null} />;
+                })}             
             </MessageList>
-            <MessageInput placeholder="Type message here" onSend={handleSend} />        
+            <MessageInput style={{fontSize: '12px'}} placeholder="Type message here" onSend={handleSend} attachButton={false}/>        
           </ChatContainer>
-        </MainContainer>
-      </div>
+        </MainContainer>)}
+      {initial && (
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexDirection: 'column',
+          cursor: 'pointer',
+          textAlign: 'center',
+          width: '100%', 
+          height:'80vh', 
+        }}>
+          <img style={{width:'50px', height:'50px'}} src={'icon2.jpg'}></img>
+          <p style={{fontSize:'16px'}}>SocialFlare—making your posts pop and sparkle in seconds! ✨📲</p>
+          <button onClick={clickInitial} style={{fontSize: '16px', backgroundColor:'#d6e6ff'}}>Click to start</button>
+        </div>
+      )}
     </div>
   )
 }
