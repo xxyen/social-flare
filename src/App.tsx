@@ -64,9 +64,9 @@ function App() {
     try {
       const maxWords = settings?.maxWords || 100;
   
-      const prompt = `Create a ${settings?.tone || 'polite'} social media post with a maximum of ${maxWords - 10} words ${
+      const prompt = `Create a ${settings?.tone || 'polite'} social media post with a maximum of ${maxWords - 3} words ${
         settings?.generateHashtags ? 'and include hashtags' : 'without hashtags'
-      } ${settings?.includeEmoji ? 'and emojis' : 'without emojis'}:`;
+      } ${settings?.includeEmoji ? 'and include emojis' : 'without emojis'}:`;
   
       const result = await getModifiedText(prompt, inputText, maxWords);
       setModifiedText(result);
