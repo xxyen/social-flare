@@ -1,5 +1,14 @@
 export type Tone = 'polite' | 'witty' | 'enthusiastic' | 'friendly' | 'informational' | 'funny';
 
+export type MessageDirection = "incoming" | "outgoing" | 0 | 1 ;
+export interface MessageString {
+  message?:string;
+  sentTime?:string;
+  sender?:string;
+  direction: MessageDirection;
+  position: "single" | "first" | "normal" | "last" | 0 |  1 | 2 | 3;
+}
+
 export interface Settings {
   tone: Tone;
   maxWords: number;

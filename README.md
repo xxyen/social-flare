@@ -1,50 +1,43 @@
-# React + TypeScript + Vite
+# Social Flare
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Social Flare** is a Chrome extension that helps you effortlessly rewrite text for viral, popular, and engaging social media posts. With configurable options for tone, word count, and emoji/hashtag inclusion, Social Flare makes it easy to enhance your content's reach and impact.
 
-Currently, two official plugins are available:
+### Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Rewrite Text for Social Media**: Quickly modify selected text to create eye-catching, shareable social media content.
+- **Customizable Settings**: Set your preferred tone, maximum word count, and choose to include hashtags and emojis for extra flair.
+- **Chat with AI**: Use the chat feature for detailed requests and to refine your content as desired.
+- **Easy Access from Context Menu**: Right-click on any selected text in your browser, choose "Modify with Social Flare," and get an instant pop-up with the rewritten text.
 
-## Expanding the ESLint configuration
+### Technology Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- **Frontend**: Vite, TypeScript, React, Material UI
+- **Extension Development**: Chrome Extensions API
+- **AI Model**: GPT-4o mini
 
-- Configure the top-level `parserOptions` property like this:
+### Pages
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+- **Home Page**: Start your content modification journey here.
+- **Chat Page**: Interact with the chatbot to refine and enhance your text.
+- **Options Page**: Adjust settings like tone, word count, and toggle hashtags/emojis for customized results.
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+### Installation
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+1. Clone this repository.
+2. Run the following commands:
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+   ```bash
+   npm install
+   npm run build
+    ```
+
+3. Go to chrome://extensions in your Chrome browser.
+4. Enable "Developer mode".
+5. Click "Load unpacked" and select the dist folder generated from the build.
+
+### Usage
+1. Highlight any text on a webpage.
+2. Right-click and select "Modify with Social Flare".
+3. A pop-up with the modified text will appear.
+4. For further customization, use the Chat Page to provide detailed modification instructions.
+5. Adjust settings on the Options Page to set your tone, limit word count, and decide whether to include hashtags and emojis.

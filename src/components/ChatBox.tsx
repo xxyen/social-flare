@@ -1,39 +1,39 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import '../App.css'
+import { MessageString } from '../utils/storage';
 import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
-import { MainContainer, ChatContainer, MessageList, Message, MessageInput, TypingIndicator } from '@chatscope/chat-ui-kit-react';
+import { MainContainer, ChatContainer, MessageList, Message, MessageInput, TypingIndicator,  MessageSeparator,Avatar  } from '@chatscope/chat-ui-kit-react';
+import ReactMarkdown from "react-markdown";
+
 
 const API_KEY = '';
-const systemMessage = { 
-  "role": "system", "content": "Explain things like you're talking to a software professional with 2 years of experience."
-}
+
+export type MessageDirection = "incoming" | "outgoing" | 0 | 1;
 
 
-export type MessageDirection = "incoming" | "outgoing" | 0 | 1 ;
+function ChatBox({initial,messages,setInitial,setMessages}:
+  {initial:boolean,messages:MessageString[],
+    setInitial:(initail:boolean)=>void,setMessages:(messages:MessageString[])=>void}) {
+  const todayString = new Date().toDateString();
 
-interface MessageString {
-    message?:string;
-    sentTime?:string;
-    sender?:string;
-    direction: MessageDirection;
-    position: "single" | "first" | "normal" | "last" | 0 |  1 | 2 | 3;
-}
-
-
-function ChatBox() {
-  const [messages, setMessages] = useState<MessageString[]>([
-    {
-      message: "Hello, I'm ChatGPT! Ask me anything!",
-      sentTime: "just now",
-      sender: "ChatGPT",
-      direction: "incoming",
-      position: "normal",
-    }
-  ]);
+  
   const [isTyping, setIsTyping] = useState(false);
+  const [socialFlarePrompt, setSocialFlarePrompt] = useState("");
 
-  const handleSend = async (message:string) => {
-    const newMessage:MessageString = {
+
+
+
+  useEffect(() => {
+    fetch('/prompt.txt')  
+      .then((response) => response.text())
+      .then((text) => {
+        setSocialFlarePrompt(text);
+      })
+      .catch((error) => console.error("Failed to load prompt:", error));
+  }, []);
+
+  const handleSend = async (message: string) => {
+    const newMessage: MessageString = {
       message,
       direction: 'outgoing',
       sender: "user",
@@ -41,42 +41,24 @@ function ChatBox() {
     };
 
     const newMessages = [...messages, newMessage];
-    console.log("sending...");
     setMessages(newMessages);
-
-    // Initial system message to determine ChatGPT functionality
-    // How it responds, how it talks, etc.
     setIsTyping(true);
     await processMessageToChatGPT(newMessages);
   };
 
-  async function processMessageToChatGPT(chatMessages:MessageString[]) { // messages is an array of messages
-    // Format messages for chatGPT API
-    // API is expecting objects in format of { role: "user" or "assistant", "content": "message here"}
-    // So we need to reformat
-
+  async function processMessageToChatGPT(chatMessages: MessageString[]) {
     const apiMessages = chatMessages.map((messageObject) => {
-      let role = "";
-      if (messageObject.sender === "ChatGPT") {
-        role = "assistant";
-      } else {
-        role = "user";
-      }
-      return { role: role, content: messageObject.message}
+      const role = messageObject.sender === "ChatGPT" ? "assistant" : "user";
+      return { role: role, content: messageObject.message };
     });
 
-    console.log("Step1");
-
-    // Get the request body set up with the model we plan to use
-    // and the messages which we formatted above. We add a system message in the front to'
-    // determine how we want chatGPT to act. 
     const apiRequestBody = {
       "model": "gpt-4o-mini",
       "messages": [
-        systemMessage,  // The system message DEFINES the logic of our chatGPT
-        ...apiMessages // The messages from our chat with ChatGPT
+        { "role": "system", "content": socialFlarePrompt },  
+        ...apiMessages
       ]
-    }
+    };
 
     await fetch("https://api.openai.com/v1/chat/completions", 
     {
@@ -86,54 +68,79 @@ function ChatBox() {
         "Content-Type": "application/json"
       },
       body: JSON.stringify(apiRequestBody)
-    }).then((data) => {
-        console.log("Step2");
-        return data.json();
-    }).then((data) => {
-        console.log("Step3");
-        console.log(data);
-        const newMessage:MessageString = {
-            message: data.choices[0].message.content,
-            sender: "ChatGPT",
-            direction: "incoming",
-            position: "normal",
-        }
+    }).then((data) => data.json())
+      .then((data) => {
+        const newMessage: MessageString = {
+          message: data.choices[0].message.content,
+          sender: "ChatGPT",
+          direction: "incoming",
+          position: "normal",
+        };
         const newMessages = [...chatMessages, newMessage];
         setMessages(newMessages);
         setIsTyping(false);
-    }).catch((err)=>{
+      }).catch((err) => {
         console.log(err);
-    });
+      });
+  }
+
+  const clickInitial = () => {
+    setInitial(false);
   }
 
   return (
-    <div className="ChatBox">
-      <div style={{ position:"relative", height: "500px", width: "300px"  }}>
+    <div className="ChatBox" style={{ position:"relative", height: "440px"}}>
+      {!initial && (        
         <MainContainer>
-          <ChatContainer>       
+          <ChatContainer>
             <MessageList 
               scrollBehavior="smooth" 
-              typingIndicator={isTyping ? <TypingIndicator content="ChatGPT is typing" /> : null}
+              typingIndicator={isTyping ? <TypingIndicator content="SocialFlare is typing" /> : null}
             >
+              <MessageSeparator content={todayString} style={{fontSize:'10px'}} />
               {messages.map((message, i) => {
                 console.log(message);
-                return <Message key={i} model={{
-                    message: message.message,
+                return <Message key={i} style={{ fontSize: '12px' }}
+                model={{
+                    type: "custom",
                     sentTime: message.sentTime,
                     sender: message.sender,
                     direction: message.direction ? message.direction : "outgoing",
-                    position: "normal"
-                  }} />;
-                })}
-                                
+                    position: "normal",
+                }}
+            >
+                {message.direction === "incoming" ? <Avatar size='md' src={'icon.jpg'} /> : null}
+                
+                <Message.CustomContent>
+                    <ReactMarkdown>{message.message}</ReactMarkdown>
+                </Message.CustomContent>
+                </Message>;
+            
+                })}             
             </MessageList>
-            <MessageInput placeholder="Type message here" onSend={handleSend} />        
+            <MessageInput style={{fontSize: '12px'}} placeholder="Type message here" onSend={handleSend} attachButton={false}/>        
+            <MessageInput style={{fontSize: '12px'}} placeholder="Type message here" onSend={handleSend} attachButton={false}/>        
           </ChatContainer>
-        </MainContainer>
-      </div>
+        </MainContainer>)}
+
+      {initial && (
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexDirection: 'column',
+          cursor: 'pointer',
+          textAlign: 'center',
+          width: '100%', 
+          height:'80vh', 
+        }}>
+          <img style={{width:'50px', height:'50px'}} src={'icon2.jpg'}></img>
+          <p style={{fontSize:'16px'}}>SocialFlare—making your posts pop and sparkle in seconds! ✨📲</p>
+          <button onClick={clickInitial} style={{fontSize: '16px', backgroundColor:'#d6e6ff'}}>Click to start</button>
+        </div>
+      )}
     </div>
   )
 }
 
-export default ChatBox
-
+export default ChatBox;

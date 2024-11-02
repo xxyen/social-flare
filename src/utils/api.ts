@@ -6,7 +6,7 @@ const openai = new OpenAI({
   dangerouslyAllowBrowser: true,
 });
 
-async function getModifiedText(prompt: string, inputText: string): Promise<string> {
+async function getModifiedText(prompt: string, inputText: string, maxWords: number): Promise<string> {
   try {
     const response = await openai.chat.completions.create({
       model: "gpt-4o-mini",
@@ -21,7 +21,7 @@ async function getModifiedText(prompt: string, inputText: string): Promise<strin
         },
       ],
       temperature: 0.7,
-      max_tokens: 150,
+      max_tokens: maxWords,
       top_p: 1,
     });
 

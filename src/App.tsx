@@ -6,7 +6,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import getModifiedText from './utils/api';
 import ChatBox from './components/ChatBox';
 import Options from './options/options';
-import { loadSettings, Settings } from './utils/storage';
+import { MessageString, loadSettings, Settings } from './utils/storage';
 
 
 function App() {
@@ -16,6 +16,17 @@ function App() {
   const [activeTab, setActiveTab] = useState(0);
   const [showAlert, setShowAlert] = useState(false);
   const [settings, setSettings] = useState<Settings | null>(null);
+
+  const [initial, setInitial] = useState(true);
+  const [messages, setMessages] = useState<MessageString[]>([
+    {
+      message: "Hey there! 😊 Ready to create some engaging social media content? Just let me know:\n1.**Topic of the post** (e.g., product launch, event update)\n2.**Audience** (e.g., followers, potential customers)\n3.**Preferred tone** (e.g., friendly, professional, humorous)\n If you're unsure, I can provide examples to help inspire you. Let’s get started! 🎉",
+      sentTime: "just now",
+      sender: "ChatGPT",
+      direction: "incoming",
+      position: "normal",
+    }
+  ]);
 
 
   // useEffect(() => {
@@ -32,6 +43,7 @@ function App() {
     chrome.storage.local.get("selectedText", (data) => {
           setInputText(data.selectedText || "");
         });
+
     loadSettings().then(setSettings);
 
     const handleStorageChange = (changes: { [key: string]: chrome.storage.StorageChange }) => {
@@ -50,11 +62,13 @@ function App() {
   const handleModifyText = async () => {
     setIsLoading(true);
     try {
-      const prompt = `Create a ${settings?.tone || 'polite'} social media post with a maximum of ${settings?.maxWords || 100} words ${
-        settings?.generateHashtags ? 'and include hashtags' : ''
-      } ${settings?.includeEmoji ? 'and emojis' : ''}:`;
-
-      const result = await getModifiedText(prompt, inputText);
+      const maxWords = settings?.maxWords || 100;
+  
+      const prompt = `Create a ${settings?.tone || 'polite'} social media post with a maximum of ${maxWords - 10} words ${
+        settings?.generateHashtags ? 'and include hashtags' : 'without hashtags'
+      } ${settings?.includeEmoji ? 'and emojis' : 'without emojis'}:`;
+  
+      const result = await getModifiedText(prompt, inputText, maxWords);
       setModifiedText(result);
       await navigator.clipboard.writeText(result);
       setShowAlert(true);
@@ -64,6 +78,8 @@ function App() {
       setIsLoading(false);
     }
   };
+
+
   const handleCopyToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(modifiedText);
@@ -89,12 +105,12 @@ function App() {
       //   px: 0,
       // }}
     >
-      <Box flexGrow={1} p={1} sx={{ overflowY: 'auto', paddingBottom: '56px' }}>
+      <Box flexGrow={1}>
         {activeTab === 0 && (
-          <Box textAlign="center">
+          <Box textAlign="left" p={1} sx={{ overflowY: 'auto', paddingBottom: '56px' }}>
             <Typography variant="h4" gutterBottom>Social Flare</Typography>
-            <Typography variant="h6" mt={2}>Selected Text</Typography>
-            <Typography variant="body1" color="text.secondary" mt={1}>{inputText}</Typography>
+            <Typography variant="h6" >Selected Text</Typography>
+            <Typography variant="body1" color="text.secondary">{inputText}</Typography>
             <Button variant="contained" color="primary" onClick={handleModifyText} disabled={isLoading} sx={{ mt: 2 }}>
               {isLoading ? <CircularProgress size={24} /> : 'Modify Text'}
             </Button>
@@ -114,7 +130,7 @@ function App() {
             )}
           </Box>
         )}
-        {activeTab === 1 && <ChatBox />}
+        {activeTab === 1 && <ChatBox initial={initial} messages={messages} setInitial={setInitial} setMessages={setMessages}/>}
         {activeTab === 2 && <Options />}
       </Box>
 
