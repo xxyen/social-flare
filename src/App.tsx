@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import getModifiedText from './utils/api';
 import { ChatBubbleLeftIcon, HomeIcon } from '@heroicons/react/24/solid';
-import ChatBox from './ChatBox';
+import ChatBox from './components/ChatBox';
 
 function App() {
   const [inputText, setInputText] = useState("");
