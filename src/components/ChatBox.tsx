@@ -98,7 +98,6 @@ function ChatBox({initial,messages,setInitial,setMessages}:
               typingIndicator={isTyping ? <TypingIndicator content="SocialFlare is typing" /> : null}
             >
               <MessageSeparator content={todayString} style={{fontSize:'10px'}} />
-              <MessageSeparator content={todayString} style={{fontSize:'10px'}} />
               {messages.map((message, i) => {
                 console.log(message);
                 return <Message key={i} style={{ fontSize: '12px' }}
@@ -119,8 +118,7 @@ function ChatBox({initial,messages,setInitial,setMessages}:
             
                 })}             
             </MessageList>
-            <MessageInput style={{fontSize: '12px'}} placeholder="Type message here" onSend={handleSend} attachButton={false}/>        
-            <MessageInput style={{fontSize: '12px'}} placeholder="Type message here" onSend={handleSend} attachButton={false}/>        
+            <MessageInput style={{fontSize: '12px'}} placeholder="Type message here" onSend={handleSend} attachButton={false}/>              
           </ChatContainer>
         </MainContainer>)}
 
