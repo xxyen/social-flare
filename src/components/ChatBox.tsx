@@ -24,7 +24,7 @@ function ChatBox({initial,messages,setInitial,setMessages}:
   const [isTyping, setIsTyping] = useState(false);
   const [socialFlarePrompt, setSocialFlarePrompt] = useState("");
   const [showAlert, setShowAlert] = useState(false);
-  const [ value, setValue ] = useState(""); 
+  // const [ value, setValue ] = useState(""); 
 
 
 
@@ -38,9 +38,10 @@ function ChatBox({initial,messages,setInitial,setMessages}:
       .catch((error) => console.error("Failed to load prompt:", error));
   }, []);
 
-  const handleSend = async () => {
+  const handleSend = async (message:string) => {
+    const plainText = message.replace(/<\/?[^>]+(>|$)/g, "");
     const newMessage: MessageString = {
-      message: value,
+      message: plainText,
       direction: 'outgoing',
       sender: "user",
       position: "normal",
@@ -49,7 +50,7 @@ function ChatBox({initial,messages,setInitial,setMessages}:
     const newMessages = [...messages, newMessage];
     setMessages(newMessages);
     setIsTyping(true);
-    setValue(""); 
+    // setValue(""); 
     await processMessageToChatGPT(newMessages);
   };
 
@@ -150,10 +151,20 @@ function ChatBox({initial,messages,setInitial,setMessages}:
             
                 })}             
             </MessageList>
-            <MessageInput style={{fontSize: '12px'}} placeholder="Type message here" onSend={handleSend} attachButton={false} onChange={(val) => setValue(val)} value={value} onPaste={(evt) => {
-                evt.preventDefault();
-                setValue(evt.clipboardData.getData("text"));
-         }} />              
+            {/* <MessageInput style={{fontSize: '12px'}} placeholder="Type message here" onSend={handleSend} attachButton={false} 
+            onChange={(val) => setValue(val)} value={value} 
+            onPaste={(evt) => {
+              evt.preventDefault();
+              const plainText = evt.clipboardData.getData("text/plain") || evt.clipboardData.getData("text");
+              setValue(plainText);
+            }}
+            />               */}
+            <MessageInput 
+              style={{ fontSize: '12px' }} 
+              placeholder="Type message here" 
+              onSend={handleSend} 
+              attachButton={false} 
+            />
           </ChatContainer>
         </MainContainer>)}
 
